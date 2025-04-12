@@ -8,7 +8,12 @@ import { JSX } from "react"
 let rawdata = ``
 
 function parseResponse(response: string): Map<string, NetworkContainers> {
-  let images: Image[] = JSON.parse(response) as Image[];
+  let images: Image[];
+  try {
+    images = JSON.parse(response) as Image[];
+  } catch (e) {
+    images = [];
+  }
 
   let Networks: Map<string, NetworkContainers> = new Map<string, NetworkContainers>();
   
