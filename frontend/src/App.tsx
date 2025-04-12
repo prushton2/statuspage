@@ -1,33 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import Ribbon from "./Ribbon.tsx"
+import Network from "./Network.tsx"
 import './App.css'
+import { Image } from "./models/Image.tsx"
+import { NetworkContainers } from "./models/Network.tsx"
+import { JSX } from "react"
+
+let rawdata = ``
+
+function parseResponse(response: string): Map<string, NetworkContainers> {
+  let images: Image[] = JSON.parse(response) as Image[];
+
+  let Networks: Map<string, NetworkContainers> = new Map<string, NetworkContainers>();
+  
+  for(let i = 0; i < images.length; i++) {
+    if(Networks.has(images[i].Networks)) {
+      Networks.get(images[i].Networks)?.Images.push(images[i]);
+    } else {
+      Networks.set(images[i].Networks, {networkName: images[i].Networks, Images: [images[i]]})
+    }
+  }
+
+  return Networks;
+}
+
+function generateNetworkHTML(Networks: Map<string, NetworkContainers>): JSX.Element[] {
+
+  let html: JSX.Element[] = [];
+
+  Networks.forEach((value, key) => {
+    console.log(`Key: ${key}, Value: ${value}`);
+    html.push(<Network NetworkInfo={value} />)
+  });
+
+  return html
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  
+
+  
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Ribbon />
+      {
+        generateNetworkHTML(parseResponse(rawdata))
+      }
     </>
   )
 }
