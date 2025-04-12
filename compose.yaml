@@ -1,5 +1,10 @@
 services:
   frontend:
     build: frontend/
+    depends-on:
+      backend:
+        condition: service_started
     ports:
       - 3000:80
+  backend:
+    build: backend/
