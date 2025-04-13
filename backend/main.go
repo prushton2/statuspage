@@ -14,11 +14,19 @@ func getContainerInfo(w http.ResponseWriter, r *http.Request) {
 	if(err != nil) {
 		fmt.Println(err)
 	}
+	
+	if(len(string(out)) < 10) {
+		io.WriteString(w, "[]")
+		return;
+	}
+
 	str := strings.Replace(string(out), "\\\"", "", -1)
+	str = strings.Replace(string(out), "'\n'", ",", -1)
+
 	str = str[1 : len(str)-2]
 	str = "[" + str + "]"
 
-	io.WriteString(w, str)
+	io.WriteString(w, str)	
 }
 
 func main() {
