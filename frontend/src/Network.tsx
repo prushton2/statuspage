@@ -12,9 +12,13 @@ export const Network = ({NetworkInfo}: {NetworkInfo: NetworkContainers}) => {
                         <p className="network-item-status">
                             Status: {container.Status}
                         </p>
-                        <p className="network-item-ip">
-                            IP Address: {container.Ports}
-                        </p>
+                        {
+                            NetworkInfo.networkName != "host" ?
+                                <p className="network-item-ip">
+                                    IP Address: {container.Ports}
+                                </p>
+                            : <></>
+                        }
                     </div>
                 ))}
             </div>

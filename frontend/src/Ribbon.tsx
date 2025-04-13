@@ -5,7 +5,7 @@ function Ribbon() {
     
     return (<>
         <div className="Ribbon">
-            linode.prushton.com
+            prushton.com
         </div>
     </>);
 }
