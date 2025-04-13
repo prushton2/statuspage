@@ -1,11 +1,10 @@
 import "./Ribbon.css"
-// import { useState } from "react";
 
 function Ribbon() {
     
     return (<>
         <div className="Ribbon">
-            prushton.com
+            linode.prushton.com
         </div>
     </>);
 }
