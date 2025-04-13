@@ -15,7 +15,7 @@ export const Network = ({NetworkInfo}: {NetworkInfo: NetworkContainers}) => {
                         {
                             NetworkInfo.networkName != "host" ?
                                 <p className="network-item-ip">
-                                    IP Address: {container.Ports}
+                                    Ports: {container.Ports}
                                 </p>
                             : <></>
                         }
