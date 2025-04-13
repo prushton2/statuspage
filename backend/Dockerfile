@@ -10,7 +10,6 @@ WORKDIR /app
 
 RUN apt-get update && \
     apt-get install -y \
-        apt-transport-https \
         ca-certificates \
         curl \
         gnupg-agent \
@@ -22,7 +21,7 @@ RUN add-apt-repository \
    $(lsb_release -cs) \
    stable"
 
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
+RUN apt-get update && apt-get install -y docker-ce-cli
 
 COPY --from=build /app/app /app/
 EXPOSE 3000

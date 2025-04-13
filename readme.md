@@ -5,7 +5,7 @@ services:
   frontend:
     build: frontend/
     environment:
-      - REACT_APP_BACKEND_URL = http://localhost:3001/ # Backend URL
+      - REACT_APP_BACKEND_URL=http://localhost:3001/ # Backend URL
     ports:
       - 3000:80
   backend:

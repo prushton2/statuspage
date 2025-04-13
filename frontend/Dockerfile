@@ -1,5 +1,8 @@
 FROM node:18-alpine3.17 as build
 
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 WORKDIR /app
 COPY . /app
 
