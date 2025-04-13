@@ -1,10 +1,14 @@
 services:
   frontend:
     build: frontend/
-    depends-on:
-      backend:
-        condition: service_started
+    # depends-on:
+    #   backend:
+    #     condition: service_started
     ports:
-      - 3000:80
+      - 3002:80
   backend:
     build: backend/
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3003:3000
