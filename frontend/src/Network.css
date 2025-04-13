@@ -8,6 +8,13 @@
     background-color: #272727;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 60%;
+
+    @media (pointer:none), (pointer:coarse) {
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
 
 .network-title {
@@ -19,6 +26,10 @@
     color: #FFF;
     margin-right: 20px;
     text-align: center;
+
+    @media (pointer:none), (pointer:coarse) {
+        margin: auto;
+    }
 }
 
 .network-list {
@@ -28,6 +39,11 @@
 
     flex-direction: column;
     gap: 15px;
+
+    @media (pointer:none), (pointer:coarse) {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
 }
 
 .network-item {
@@ -36,7 +52,6 @@
 
     padding: 15px;
     background-color: #2f2f2f;
-    /* border: 1px solid #ddd; */
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
