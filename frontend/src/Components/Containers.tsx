@@ -30,19 +30,21 @@ export const Containers = ({Networks}: {Networks: NetworkContainers[] | undefine
     function getNetwork(Network: NetworkContainers) {
         return <div className="network-container">
             <h2 className="network-title">{Network.networkName}</h2>
-            <div className="network-list">
+            <div className="network-image-list">
                 {Network.Images.map((container, index) => (
-                    <div key={index} className="network-item">
-                        {getServiceDot(container.Health)}
-                        <h3 className="network-item-element">
+                    <div key={index} className="docker-image">
+                        <p className="docker-image-status-dot">
+                            {getServiceDot(container.Health)}
+                        </p>
+                        <h3 className="docker-image-title">
                             {container.Name}
                         </h3>
 
-                        <p className="network-item-element">
+                        <p className="docker-image-element">
                             {container.Status}
                         </p>
                         
-                        <p className="network-item-element">
+                        <p className="docker-image-element">
                             {container.Size}
                         </p>
                     </div>
