@@ -27,7 +27,7 @@ function App() {
       }
 
       let networksList: NetworkContainers[] = []
-      networks.forEach((value: NetworkContainers, key: string) => {
+      networks.forEach((value: NetworkContainers) => {
         networksList.push(value);
       })
 
