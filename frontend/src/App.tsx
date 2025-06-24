@@ -1,60 +1,46 @@
-import Ribbon from "./Ribbon.tsx"
-import Network from "./Network.tsx"
 import './App.css'
-import { Image } from "./models/Image.tsx"
-import { NetworkContainers } from "./models/Network.tsx"
-import { JSX, useEffect, useState } from "react"
-import { getContainerInfo } from "./API.tsx"
-
-function parseResponse(response: string): Map<string, NetworkContainers> {
-  let images: Image[];
-  try {
-    images = JSON.parse(response) as Image[];
-  } catch (e) {
-    images = [];
-  }
-
-  let Networks: Map<string, NetworkContainers> = new Map<string, NetworkContainers>();
-  
-  for(let i = 0; i < images.length; i++) {
-    if(Networks.has(images[i].Networks)) {
-      Networks.get(images[i].Networks)?.Images.push(images[i]);
-    } else {
-      Networks.set(images[i].Networks, {networkName: images[i].Networks, Images: [images[i]]})
-    }
-  }
-
-  return Networks;
-}
-
-function generateNetworkHTML(Networks: Map<string, NetworkContainers>): JSX.Element[] {
-  let html: JSX.Element[] = [];
-
-  Networks.forEach((value, key) => {
-    console.log(`Key: ${key}, Value: ${value}`);
-    html.push(<Network NetworkInfo={value} key={key}/>)
-  });
-
-  return html
-}
+import { useEffect, useState } from "react";
+import Containers from './Components/Containers.tsx';
+import Ribbon from "./Components/Ribbon.tsx"
+import { NetworkContainers } from './models/Network.tsx';
+import { Image } from './models/Image.tsx';
+import { getContainerInfo } from './API.tsx';
 
 function App() {
-  const [statusData, setStatusData] = useState<string>("");
+  const [networkContainers, setNetworkContainers] = useState<NetworkContainers[]>()
 
   useEffect(() => {
-    async function getData() {
-      let string: string = await getContainerInfo();
-      console.log(typeof string);
-      setStatusData(string);
+    async function init() {
+      let images: Image[] = await getContainerInfo()
+      let networks: Map<string, NetworkContainers> = new Map<string, NetworkContainers>
+
+      for(let i = 0; i < images.length; i++) {
+        let item = networks.get(images[i].Network);
+
+        if(item == undefined) {
+          networks.set(images[i].Network, {networkName: images[i].Network, Images: []} as NetworkContainers)
+          item = networks.get(images[i].Network)
+        }
+
+        item!.Images.push(images[i])
+        networks.set(images[i].Network, item!);
+      }
+
+      let networksList: NetworkContainers[] = []
+      networks.forEach((value: NetworkContainers, key: string) => {
+        networksList.push(value);
+      })
+
+      setNetworkContainers(networksList)
     }
-    getData();
+    init()
   }, [])
+
+
   return (
     <>
       <Ribbon />
-      {
-        generateNetworkHTML(parseResponse(statusData))
-      }
+      <Containers Networks={networkContainers}/>
     </>
   )
 }

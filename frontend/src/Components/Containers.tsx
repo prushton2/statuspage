@@ -1,8 +1,11 @@
 import { JSX } from "react";
-import "./Network.css"
-import { NetworkContainers } from "./models/Network";
+import "./Containers.css"
+import { NetworkContainers } from "../models/Network";
 
-export const Network = ({NetworkInfo}: {NetworkInfo: NetworkContainers}) => {
+export const Containers = ({Networks}: {Networks: NetworkContainers[] | undefined}) => {
+    if(Networks == undefined) {
+        return <>Loading...</>
+    }
     let messages: {
         starting:  [string, string],
         healthy:   [string, string],
@@ -12,40 +15,27 @@ export const Network = ({NetworkInfo}: {NetworkInfo: NetworkContainers}) => {
         healthy:   ["Service is Healthy", "green"],
         unhealthy: ["Service is Unhealthy", "red"]
     };
-
-
-    const formatPorts = (ports: string) => {
-        return ports.split(", ").map((port, index) => (
-            <span key={index}>
-                {port}
-                <br />
-            </span>
-        ));
-    };
     
-    const getServiceDot = (status: string): JSX.Element => {
-        let health;
+    const getServiceDot = (health: string): JSX.Element => {
 
-        try {
-            health = status.split("(")[1].slice(0,-1);
-        } catch (e) {
-            return <span className="dot" />
+        if(health == "") {
+            return <></>
         }
-
+        
         let healthInfo: [string, string] = messages[health as keyof typeof messages];
         
         return <span className={`dot ${healthInfo[1]}`} title={healthInfo[0]}/>
     }
 
-    return <>
-        <div className="network-container">
-            <h2 className="network-title">{NetworkInfo.networkName}</h2>
+    function getNetwork(Network: NetworkContainers) {
+        return <div className="network-container">
+            <h2 className="network-title">{Network.networkName}</h2>
             <div className="network-list">
-                {NetworkInfo.Images.map((container, index) => (
+                {Network.Images.map((container, index) => (
                     <div key={index} className="network-item">
-                        {getServiceDot(container.Status)}
+                        {getServiceDot(container.Health)}
                         <h3 className="network-item-element">
-                            {container.Names}
+                            {container.Name}
                         </h3>
 
                         <p className="network-item-element">
@@ -53,13 +43,17 @@ export const Network = ({NetworkInfo}: {NetworkInfo: NetworkContainers}) => {
                         </p>
                         
                         <p className="network-item-element">
-                            {NetworkInfo.networkName != "host" ? formatPorts(container.Ports) : <></>}
+                            {container.Size}
                         </p>
                     </div>
                 ))}
             </div>
         </div>
+    }
+
+    return <>
+        {Networks.map((v: NetworkContainers) => getNetwork(v))}
     </>
 }
 
-export default Network;
+export default Containers;
