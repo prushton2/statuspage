@@ -68,7 +68,14 @@ func getContainerInfo(w http.ResponseWriter, r *http.Request) {
 	var parsedContainers []SentInfo
 
 	for _, containerString := range containers {
-		containerString = containerString[1 : len(containerString)-2]
+		for containerString[0] != '{' {
+			containerString = containerString[1:]
+		}
+
+		for containerString[len(containerString)-1] != '}' {
+			containerString = containerString[:len(containerString)-1]
+		}
+
 		var container ContainerInfo
 
 		err := json.Unmarshal([]byte(containerString), &container)
