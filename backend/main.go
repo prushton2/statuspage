@@ -62,7 +62,7 @@ func getContainerInfo(w http.ResponseWriter, r *http.Request) {
 
 	out = strings.Replace(out, "\\\"", "", 1)
 
-	containers := strings.Split(out, "\\n")
+	containers := strings.Split(out, "\n")
 
 	var parsedContainers []SentInfo
 
