@@ -8,5 +8,6 @@ COPY . /app
 RUN mkdir -p ~/.config/nix && \
     echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
+RUN nix-env -iA nixpkgs.docker
 RUN nix build .
 CMD ["/app/result/bin/statuspagebackend"]
