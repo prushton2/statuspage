@@ -23,6 +23,7 @@
       name = modname;
       shellHook = ''export PS1="\[\e[1;32m\][nix:${modname}]\]$ \e[0m"'';
       packages = with pkgs; [
+        docker
         go
         gcc
       ];
