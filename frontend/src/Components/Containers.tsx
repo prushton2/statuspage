@@ -7,13 +7,13 @@ export const Containers = ({Networks}: {Networks: NetworkContainers[] | undefine
         return <>Loading...</>
     }
     let messages: {
-        starting:  [string, string],
-        healthy:   [string, string],
-        unhealthy: [string, string]
+        "health: starting":  [string, string],
+        "healthy":   [string, string],
+        "unhealthy": [string, string]
     } = {
-        starting:  ["Service is Starting", "blue"],
-        healthy:   ["Service is Healthy", "green"],
-        unhealthy: ["Service is Unhealthy", "red"]
+        "health: starting":  ["Service is Starting", "blue"],
+        "healthy":   ["Service is Healthy", "green"],
+        "unhealthy": ["Service is Unhealthy", "red"]
     };
     
     const getServiceDot = (health: string): JSX.Element => {
