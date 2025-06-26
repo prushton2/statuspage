@@ -9,4 +9,5 @@
     color: var(--text);
     align-content: center;
     text-align: center;
+    z-index: 1;
 }
