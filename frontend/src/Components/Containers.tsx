@@ -6,6 +6,7 @@ export const Containers = ({Networks}: {Networks: NetworkContainers[] | undefine
     if(Networks == undefined) {
         return <>Loading...</>
     }
+    
     let messages: {
         "health: starting": [string, string],
         "healthy":          [string, string],

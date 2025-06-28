@@ -11,3 +11,20 @@
     text-align: center;
     z-index: 1;
 }
+
+.Summary {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    margin-right: 10px;
+    z-index: 2;
+    font-size: xx-large;
+}
+
+.Summary.Fail {
+    color: #DA291C;
+}
+
+.Summary.Success {
+    color: #00843D;
+}
