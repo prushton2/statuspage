@@ -113,6 +113,9 @@ func getContainerInfo(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/containerInfo", getContainerInfo)
-
+	
+	fmt.Println("Running")
 	_ = http.ListenAndServe(":3000", nil)
+	fmt.Println("exiting")
+
 }

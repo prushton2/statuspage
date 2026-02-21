@@ -1,14 +1,10 @@
-FROM nixos/nix
+FROM golang:1.25-alpine3.23
 
-EXPOSE 3000
+RUN apk add --no-cache docker-cli shadow
 
 WORKDIR /app
-COPY . /app
+COPY . .
 
-RUN mkdir -p ~/.config/nix && \
-    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+RUN go build -o statuspagebackend .
 
-RUN nix-env -iA nixpkgs.docker
-RUN nix-env -iA nixpkgs.curl
-RUN nix build .
-CMD ["/app/result/bin/statuspagebackend"]
+CMD ["/app/statuspagebackend"]

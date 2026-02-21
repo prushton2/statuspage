@@ -1,0 +1,11 @@
+:80 {
+	# handle_path automatically strips the matched prefix
+    handle_path /be/* {
+        reverse_proxy statuspage-backend:3000
+    }
+
+    # handle serves as a fallback for everything else
+    handle {
+        reverse_proxy statuspage-frontend:80
+    }
+}

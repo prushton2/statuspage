@@ -3,7 +3,7 @@ import { Image } from './models/Image';
 
 export const getContainerInfo = async (): Promise<Image[]> => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/containerInfo`);
+        const response = await axios.get(`/be/containerInfo`);
         return response.data as Image[];
     } catch (error) {
         console.error('Error fetching container info:', error);
