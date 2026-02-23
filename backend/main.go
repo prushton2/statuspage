@@ -7,7 +7,15 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
+	"os"
+	"time"
+	"slices"
 )
+
+type Cache struct {
+	containers []SentInfo
+	time time.Time
+}
 
 type ContainerInfo struct {
 	Command      string `json:"Command"`
@@ -34,47 +42,48 @@ type SentInfo struct {
 	Health  string `json:"Health"`
 }
 
-func getContainerInfo(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+var cache Cache = Cache{
+	containers: make([]SentInfo, 0),
+	time: time.Now(),
+}
 
-	// return
-
+func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
+	
 	cmd := exec.Command("docker", "ps", "--format", "{{json .}}")
 	out_bytes, err := cmd.Output()
 
 	if err != nil {
-		fmt.Println(err)
-		fmt.Println(string(out_bytes))
-		http.Error(w, "Error running docker command", http.StatusInternalServerError)
-		io.WriteString(w, "")
-		return
+		return nil, fmt.Errorf("Error running docker command: ", err)
 	}
+	
 	out := string(out_bytes)
-
+	
 	if len(out) < 10 {
-		fmt.Println("len < 10")
-		http.Error(w, "Command output too short", http.StatusInternalServerError)
-		io.WriteString(w, "")
-		return
+		return nil, fmt.Errorf("Command output too short")
 	}
 
 	out = strings.Replace(out, "\\\"", "", 1)
-
 	containers := strings.Split(out, "\n")
+	
+	var parsedContainers []SentInfo = make([]SentInfo, 0)
 
-	var parsedContainers []SentInfo
+	// fmt.Println(containers)
 
 	for _, containerString := range containers {
-		var container ContainerInfo
+		if containerString == "" {
+			continue
+		}
+		// fmt.Println("Container:", containerString)
 
+		var container ContainerInfo
 		err := json.Unmarshal([]byte(containerString), &container)
+		
+		if slices.Index(ignoreContainers, container.Names) != -1 {
+			continue
+		}
 
 		if err != nil {
-			fmt.Println("Error parsing container string to object")
-			fmt.Println(err)
-			fmt.Println(containerString)
+			fmt.Println("getContainerInfo: Error parsing container (", containerString, ") string to object: ", err)
 			continue
 		}
 
@@ -98,12 +107,44 @@ func getContainerInfo(w http.ResponseWriter, r *http.Request) {
 		parsedContainers = append(parsedContainers, info)
 	}
 
-	str, err := json.Marshal(parsedContainers)
+	return parsedContainers, nil
+}
 
+func httpGetContainerInfo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	
+	var ignoreContainers []string = strings.Split(os.Getenv("IGNORE_CONTAINERS"), "\n")
+	now := time.Now()
+
+	var containerInfo []SentInfo
+	var err error
+
+	// fmt.Println("Time diff: ", now.Sub(cache.time), now.Sub(cache.time) > 10 * time.Second)
+	if true {
+	// if now.Sub(cache.time) > 10 * time.Second {
+		containerInfo, err = getContainerInfo(ignoreContainers)
+
+		if err != nil {
+			fmt.Println("Error during getContainerInfo:", err)
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+			return
+		}
+
+		cache.containers = containerInfo
+		cache.time = now
+
+	} else {
+		containerInfo = cache.containers
+	}
+	
+	str, err := json.Marshal(containerInfo)
+	
 	if err != nil {
-		fmt.Println("Error parsing objects to string")
+		fmt.Println("Final Marshal: Error parsing objects to string")
 		fmt.Println(err)
-		http.Error(w, "Error parsing objects to string", http.StatusInternalServerError)
+		http.Error(w, "Final Marshal: Error parsing objects to string", http.StatusInternalServerError)
 		io.WriteString(w, "")
 		return
 	}
@@ -112,7 +153,7 @@ func getContainerInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/containerInfo", getContainerInfo)
+	http.HandleFunc("/containerInfo", httpGetContainerInfo)
 	
 	fmt.Println("Running")
 	_ = http.ListenAndServe(":3000", nil)
