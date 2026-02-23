@@ -1,4 +1,4 @@
-FROM node:25-alpine3.22 as build
+FROM node:current-alpine3.22 as build
 
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
