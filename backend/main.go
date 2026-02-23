@@ -73,7 +73,6 @@ func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 		if containerString == "" {
 			continue
 		}
-		// fmt.Println("Container:", containerString)
 
 		var container ContainerInfo
 		err := json.Unmarshal([]byte(containerString), &container)
@@ -121,9 +120,7 @@ func httpGetContainerInfo(w http.ResponseWriter, r *http.Request) {
 	var containerInfo []SentInfo
 	var err error
 
-	// fmt.Println("Time diff: ", now.Sub(cache.time), now.Sub(cache.time) > 10 * time.Second)
-	if true {
-	// if now.Sub(cache.time) > 10 * time.Second {
+	if now.Sub(cache.time) > 10 * time.Second {
 		containerInfo, err = getContainerInfo(ignoreContainers)
 
 		if err != nil {
