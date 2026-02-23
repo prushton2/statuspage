@@ -13,8 +13,32 @@ function App() {
 
   useEffect(() => {
     async function init() {
-      let containerInfo = await getContainerInfo()
-      let networkContainers = convertToNetworkContainers(containerInfo)
+      let httpResponse = await getContainerInfo()
+      let containerInfo = httpResponse.containers
+      let unsortedNetworkContainers = convertToNetworkContainers(containerInfo)
+
+      let networkContainers: NetworkContainers[] = []
+      let topSegment: (NetworkContainers | null)[] = new Array<NetworkContainers | null>(null)
+      let bottomSegment: (NetworkContainers | null)[] = new Array<NetworkContainers | null>(null)
+
+      unsortedNetworkContainers.forEach((e => {
+        if(httpResponse.topNetworks.indexOf(e.networkName) != -1) {
+          topSegment[httpResponse.topNetworks.indexOf(e.networkName)] = e
+        
+        } else if (httpResponse.bottomNetworks.indexOf(e.networkName) != -1) {
+          bottomSegment[httpResponse.bottomNetworks.indexOf(e.networkName)] = e
+
+        } else {
+          networkContainers.push(e)
+        
+        }
+      }))
+
+      let filteredTopSegment: NetworkContainers[] = topSegment.filter(e => e !== null);
+      let filteredBottomSegment: NetworkContainers[] = bottomSegment.filter(e => e !== null);
+
+      networkContainers = filteredTopSegment.concat(networkContainers).concat(filteredBottomSegment)
+
       setHealthSummary(getHealthSummary(containerInfo))
       setNetworkContainers(networkContainers)
     }

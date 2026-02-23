@@ -56,24 +56,14 @@ var cache Cache = Cache{
 
 func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 	
-	// cmd := exec.Command("docker", "ps", "--format", "{{json .}}")
-	// out_bytes, err := cmd.Output()
+	cmd := exec.Command("docker", "ps", "--format", "{{json .}}")
+	out_bytes, err := cmd.Output()
 
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error running docker command: ", err)
-	// }
+	if err != nil {
+		return nil, fmt.Errorf("Error running docker command: ", err)
+	}
 	
-	// out := string(out_bytes)
-
-	f, err := ioutil.ReadFile("test_ps_output.txt")
-    if err != nil {
-        panic(err)
-    }
-
-	// var out_bytes []byte
-	// f.Read(&out_bytes)
-
-	out := string(f)
+	out := string(out_bytes)
 	
 	if len(out) < 10 {
 		return nil, fmt.Errorf("Command output too short")
