@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os/exec"
+	"io/ioutil"
+	// "os/exec"
 	"strings"
 	"os"
 	"time"
@@ -42,6 +43,12 @@ type SentInfo struct {
 	Health  string `json:"Health"`
 }
 
+type HTTPResponse struct {
+	Containers     []SentInfo `json:"containers"`
+	TopNetworks    []string   `json:"topNetworks"`
+	BottomNetworks []string   `json:"bottomNetworks"`
+}
+
 var cache Cache = Cache{
 	containers: make([]SentInfo, 0),
 	time: time.Now(),
@@ -49,14 +56,24 @@ var cache Cache = Cache{
 
 func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 	
-	cmd := exec.Command("docker", "ps", "--format", "{{json .}}")
-	out_bytes, err := cmd.Output()
+	// cmd := exec.Command("docker", "ps", "--format", "{{json .}}")
+	// out_bytes, err := cmd.Output()
 
-	if err != nil {
-		return nil, fmt.Errorf("Error running docker command: ", err)
-	}
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Error running docker command: ", err)
+	// }
 	
-	out := string(out_bytes)
+	// out := string(out_bytes)
+
+	f, err := ioutil.ReadFile("test_ps_output.txt")
+    if err != nil {
+        panic(err)
+    }
+
+	// var out_bytes []byte
+	// f.Read(&out_bytes)
+
+	out := string(f)
 	
 	if len(out) < 10 {
 		return nil, fmt.Errorf("Command output too short")
@@ -66,8 +83,6 @@ func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 	containers := strings.Split(out, "\n")
 	
 	var parsedContainers []SentInfo = make([]SentInfo, 0)
-
-	// fmt.Println(containers)
 
 	for _, containerString := range containers {
 		if containerString == "" {
@@ -115,6 +130,8 @@ func httpGetContainerInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	
 	var ignoreContainers []string = strings.Split(os.Getenv("IGNORE_CONTAINERS"), "\n")
+	var topNetworks []string = strings.Split(os.Getenv("TOP_NETWORKS"), "\n")
+	var bottomNetworks []string = strings.Split(os.Getenv("BOTTOM_NETWORKS"), "\n")
 	now := time.Now()
 
 	var containerInfo []SentInfo
@@ -135,8 +152,14 @@ func httpGetContainerInfo(w http.ResponseWriter, r *http.Request) {
 	} else {
 		containerInfo = cache.containers
 	}
+
+	var httpResponse HTTPResponse = HTTPResponse{
+		Containers:     containerInfo,
+		TopNetworks:    topNetworks,
+		BottomNetworks: bottomNetworks,
+	}
 	
-	str, err := json.Marshal(containerInfo)
+	str, err := json.Marshal(httpResponse)
 	
 	if err != nil {
 		fmt.Println("Final Marshal: Error parsing objects to string")
