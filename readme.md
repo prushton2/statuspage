@@ -3,24 +3,23 @@
 ```yaml
 services:
   frontend:
-    build: 
-      context: frontend/
-      args:
-        - VITE_BACKEND_URL=http://localhost:3001/ # Backend URL
-    ports:
-      - 3000:80
+    container_name: statuspage-frontend
+    build: frontend/
+
   backend:
+    container_name: statuspage-backend
     build: backend/
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Needs to connect to the docker socket outside the container
-    ports:
-      - 3001:3000
+    environment:
+      IGNORE_CONTAINERS: |
+        statuspage-caddy
   caddy:
     image: caddy
-    container_name: searchengine-caddy
+    container_name: statuspage-caddy
     restart: always
     ports:
-      - "${PORT}:80"
+      - "8080:80"
     volumes:
-      - ./config-prod/Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile
 ```
