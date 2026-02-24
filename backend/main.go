@@ -63,6 +63,13 @@ func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 	}
 	
 	out := string(out_bytes)
+
+	// b, err := os.ReadFile("test_ps_output.txt") // just pass the file name
+    // if err != nil {
+    //     fmt.Print(err)
+    // }
+
+    // out := string(b) // convert content to a 'string'
 	
 	if len(out) < 10 {
 		return nil, fmt.Errorf("Command output too short")

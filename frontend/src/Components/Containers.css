@@ -88,14 +88,16 @@
 
     margin: 10px;
     color: var(--text);
+    align-content: center;
 }
 
 .docker-image-element {
     flex-grow: 10;
     flex-basis: 0%;
-
+    
     margin: 10px;
     color: var(--text-muted);
+    align-content: center;
 }
 
 .docker-image-status-dot {
