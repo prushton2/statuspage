@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os/exec"
+	"regexp"
 	"strings"
 	"os"
 	"time"
@@ -50,7 +51,7 @@ type HTTPResponse struct {
 
 var cache Cache = Cache{
 	containers: make([]SentInfo, 0),
-	time: time.Now(),
+	time: time.Unix(0, 0),
 }
 
 func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
@@ -97,14 +98,14 @@ func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 			continue
 		}
 
-		split := strings.Split(container.Status, "(")
+    	r, _ := regexp.Compile("\\((health\\: starting|healthy|unhealthy)\\)")
+		match := r.FindString(container.Status)
 
-		var health string = ""
-		var status string = split[0]
+		var status string = strings.ReplaceAll(container.Status, match, "")
+		status = strings.TrimSpace(status)
 
-		if len(split) > 1 {
-			health = split[1][:len(split[1])-1]
-		}
+		match = strings.ReplaceAll(match, "(", "")
+		var health string = strings.ReplaceAll(match, ")", "")
 
 		var info SentInfo = SentInfo{
 			Name:    container.Names,
