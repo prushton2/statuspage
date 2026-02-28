@@ -1,2 +1,3 @@
 compose.yaml
 test_ps_output.txt
+.env

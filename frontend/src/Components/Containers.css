@@ -12,8 +12,11 @@
 
     @media (pointer:none), (pointer:coarse) {
         flex-direction: column;
-        width: 100%;
+        width: 100vw;
         margin-bottom: 20px;
+        padding: 0px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 }
 

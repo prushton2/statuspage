@@ -11,6 +11,8 @@ import (
 	"os"
 	"time"
 	"slices"
+
+	"github.com/joho/godotenv"
 )
 
 type Cache struct {
@@ -54,24 +56,40 @@ var cache Cache = Cache{
 	time: time.Unix(0, 0),
 }
 
-func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
-	
+func getComposeOutput() (string, error) {
 	cmd := exec.Command("docker", "ps", "--format", "{{json .}}")
 	out_bytes, err := cmd.Output()
-
+	
 	if err != nil {
-		return nil, fmt.Errorf("Error running docker command: ", err)
+		return "", fmt.Errorf("Error running docker command: ", err)
 	}
 	
-	out := string(out_bytes)
+	return string(out_bytes), nil
+}
 
-	// b, err := os.ReadFile("test_ps_output.txt") // just pass the file name
-    // if err != nil {
-    //     fmt.Print(err)
-    // }
+func getTestOutput() string {
+	b, err := os.ReadFile("test_ps_output.txt") // just pass the file name
+    if err != nil {
+        fmt.Print(err)
+    }
 
-    // out := string(b) // convert content to a 'string'
+    return string(b) // convert content to a 'string'
+}
+
+func getContainerInfo(ignoreContainers []string) ([]SentInfo, error) {
 	
+	var out string
+	var err error
+
+	if os.Getenv("DEBUG") == "true" {
+		out= getTestOutput()
+	} else {
+		out, err = getComposeOutput()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if len(out) < 10 {
 		return nil, fmt.Errorf("Command output too short")
 	}
@@ -170,6 +188,14 @@ func httpGetContainerInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 	http.HandleFunc("/containerInfo", httpGetContainerInfo)
 	
 	fmt.Println("Running")
