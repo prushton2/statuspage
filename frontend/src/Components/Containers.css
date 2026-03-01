@@ -64,15 +64,15 @@
 }
 
 .red {
-    background-color: #DA291C;
+    background-color: var(--unhealthy);
 }
 
 .green {
-    background-color: #00843D;
+    background-color: var(--healthy);
 }
 
 .blue {
-    background-color: #003DA5;
+    background-color: var(--starting);
 }
 
 .docker-image {

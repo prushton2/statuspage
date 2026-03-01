@@ -25,9 +25,9 @@
 }
 
 .Summary.Fail {
-    color: #DA291C;
+    color: var(--unhealthy);
 }
 
 .Summary.Success {
-    color: #00843D;
+    color: var(--healthy);
 }

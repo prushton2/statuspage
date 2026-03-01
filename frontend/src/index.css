@@ -1,9 +1,32 @@
 :root {
-  --bg-dark: hsl(0 0% 13%);
+  /* --bg-dark: hsl(0 0% 13%);
   --bg: hsl(0 0% 18%);
   --bg-light: hsl(0 0% 23%);
   --text: hsl(0 0% 90%);
-  --text-muted: hsl(0 0% 70%);
+  --text-muted: hsl(0 0% 70%); */
+
+  --bg-dark: hsl(235 67% 2%);
+  --bg: hsl(231 45% 6%);
+  --bg-light: hsl(230 28% 10%);
+
+  --text: hsl(229 100% 100%);
+  --text-muted: hsl(229 32% 74%);
+  --highlight: hsl(229 17% 43%);
+  
+  --border: hsl(230 22% 32%);
+  --border-muted: hsl(231 30% 21%);
+  
+  --primary: hsl(230 74% 78%);
+  --secondary: hsl(47 45% 58%);
+  
+  --danger: hsl(9 26% 64%);
+  --warning: hsl(52 19% 57%);
+  --success: hsl(146 17% 59%);
+  --info: hsl(217 28% 65%);
+
+  --healthy: #00843D;
+  --starting: #003DA5;
+  --unhealthy: #DA291C;
 
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
